@@ -1,5 +1,6 @@
 import { format, formatDistanceToNow } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
+import { Coin } from 'phosphor-react'
 import { useState } from 'react'
 import { Avatar } from './Avatar'
 import { Comment } from './Comment'
@@ -20,6 +21,14 @@ export function Post({ author, publishedAt, content }) {
 
     function handleNewCommentChange() {
         setNewCommentText(event.target.value)
+    }
+
+    function deleteComment(commentToDelete) {
+        const commentsWithoutDeleteOne = comments.filter(comment => {
+            return comment !== commentToDelete
+        })
+
+        setComments(commentsWithoutDeleteOne)
     }
 
     return (
@@ -56,7 +65,13 @@ export function Post({ author, publishedAt, content }) {
             </form>
             <div className={styles.commentList}>
                 {comments.map(comment => {
-                    return <Comment key={comment} content={comment} />
+                    return (
+                        <Comment
+                            key={comment}
+                            content={comment}
+                            onDeleteComment={deleteComment}
+                        />
+                    )
                 })}
             </div>
         </article>
