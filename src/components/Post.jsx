@@ -1,6 +1,5 @@
 import { format, formatDistanceToNow } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
-import { Coin } from 'phosphor-react'
 import { useState } from 'react'
 import { Avatar } from './Avatar'
 import { Comment } from './Comment'
@@ -11,6 +10,7 @@ export function Post({ author, publishedAt, content }) {
     const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, { locale: ptBR, addSuffix: true })
     const [comments, setComments] = useState(['Post muito bacana, hein?!'])
     const [newCommentText, setNewCommentText] = useState('')
+    const isNewCommentEmpty = newCommentText.length === 0
 
     function handleCreateNewComment() {
         event.preventDefault()
@@ -20,6 +20,7 @@ export function Post({ author, publishedAt, content }) {
     }
 
     function handleNewCommentChange() {
+        event.target.setCustomValidity('')
         setNewCommentText(event.target.value)
     }
 
@@ -29,6 +30,10 @@ export function Post({ author, publishedAt, content }) {
         })
 
         setComments(commentsWithoutDeleteOne)
+    }
+
+    function handleNewCommentInvalid() {
+        event.target.setCustomValidity('Esse campo é obrigatório!')
     }
 
     return (
@@ -58,9 +63,13 @@ export function Post({ author, publishedAt, content }) {
                     placeholder="Deixe um comentário"
                     value={newCommentText}
                     onChange={handleNewCommentChange}
+                    onInvalid={handleNewCommentInvalid}
+                    required
                 />
                 <footer>
-                    <button type="submit">Publicar</button>
+                    <button type="submit" disabled={isNewCommentEmpty}>
+                        Publicar
+                    </button>
                 </footer>
             </form>
             <div className={styles.commentList}>
